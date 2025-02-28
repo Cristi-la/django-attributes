@@ -1,0 +1,2 @@
+KEY_PREFIX = "attr_"
+CACHE_TIMEOUT = 3600

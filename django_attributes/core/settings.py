@@ -103,3 +103,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#----------------------------------
+ATTRIBUTE_KEY_PREFIX = "attr_"
+ATTRIBUTE_CACHE_TIMEOUT = 300
+
+MIDDLEWARE += [
+    'attributes.context_processors.attributes_context',
+]

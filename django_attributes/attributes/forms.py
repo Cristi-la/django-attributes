@@ -1,4 +1,4 @@
-from django import forms
+from django.forms import ModelForm, Select
 from attributes.models import AttrConfiguration, AttrValue
 from attributes.utils import (
     get_allowed_field_choices,
@@ -7,14 +7,14 @@ from attributes.utils import (
 )
 from django.core.exceptions import ValidationError
 
-class AttrConfigurationForm(forms.ModelForm):
+class AttrConfigurationForm(ModelForm):
     class Meta:
         model = AttrConfiguration
         fields = '__all__'
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['field_type'].widget = forms.Select(choices=get_allowed_field_choices())
+        self.fields['field_type'].widget = Select(choices=get_allowed_field_choices())
 
     def clean(self):
         cleaned_data = super().clean()
@@ -43,7 +43,13 @@ class AttrConfigurationForm(forms.ModelForm):
         return cleaned_data
 
 
-class AttrValueForm(forms.ModelForm):
+class AttrConfigurationValuesForm(ModelForm):
+    class Meta:
+        model = AttrConfiguration
+        fields = []
+
+
+class AttrValueForm(ModelForm):
     class Meta:
         model = AttrValue
         fields = '__all__'
@@ -53,7 +59,7 @@ class AttrValueForm(forms.ModelForm):
         self.instance: AttrValue
         self.instance.key: AttrConfiguration # type: ignore
 
-        if self.instance and self.instance.key is None:
+        if not self.instance or not getattr(self.instance, 'key', None):
             return
         
         config = self.instance.key
@@ -63,12 +69,6 @@ class AttrValueForm(forms.ModelForm):
             return
 
         old_field = self.fields.get('value')
-        # dynamic_field = field_cls(
-        #     label=old_field.label,
-        #     required=old_field.required,
-        #     help_text=old_field.help_text,
-        #     initial=self.instance.value if self.instance.value is not None else old_field.initial,
-        # )
 
         dynamic_field = field_cls(
             required=old_field.required,
