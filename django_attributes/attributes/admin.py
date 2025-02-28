@@ -16,6 +16,7 @@ class AttrValueInline(admin.TabularInline):
 
     form = AttrValueForm
     queryset = AttrValue.objects.select_related('key').order_by('key__key', '-order')
+    
 
 @admin.register(AttrConfiguration)
 class AttrConfigurationAdmin(admin.ModelAdmin):
